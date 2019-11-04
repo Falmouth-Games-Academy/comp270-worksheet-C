@@ -31,6 +31,7 @@ private:
 	
 	Point3D		m_position = Point3D();				// The position (translation) of the camera in world space
 	Vector3D	m_rotation = Vector3D();			// The Euler rotation of the camera in world space
+	Vector3D	m_cameraForward = Vector3D();		// forward facing vector
 	Matrix3D	m_worldToCameraTransform;			// The matrix representing the transformation from world to camera coordinates
 	bool		m_worldTransformChanged = true;		// Flag indicating whether the camera's world transform has been updated
 	bool		m_zoomChanged = true;				// Flat indicating whether the view plane distance has changed

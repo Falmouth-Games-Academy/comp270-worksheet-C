@@ -6,6 +6,7 @@
 void Camera::init(const Point3D& pos)
 {
 	m_position = pos;
+	m_cameraForward = Vector3D(pos.x, pos.y, pos.z - 1);
 	m_screenBuf.init(m_viewPlane.resolutionX, m_viewPlane.resolutionY);
 }
 
@@ -65,6 +66,18 @@ void Camera::generateRays()
 	// TODO: store the ray direction (in camera space through each pixel of the subdivided view plane,
 	// and store it at an appropriate index of m_pixelRays
 
+	for (int i = 0; i < m_viewPlane.resolutionX; i++)
+	{
+		std::vector<Vector3D> rays;
+		for (int j = 0; j < m_viewPlane.resolutionY; j++)
+		{
+			Vector3D ray = Vector3D((float) i - (m_viewPlane.resolutionX / 2), (float)j - (m_viewPlane.resolutionY / 2), m_viewPlane.distance);
+			ray.normalise();
+			rays.push_back(ray);
+		}
+		m_pixelRays.push_back(rays);
+	}
+	
 }
 
 // Computes the transformation that will take objects from world to camera coordinates
