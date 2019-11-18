@@ -64,6 +64,12 @@ void Camera::generateRays()
 	m_pixelRays.clear();
 	// TODO: store the ray direction (in camera space through each pixel of the subdivided view plane,
 	// and store it at an appropriate index of m_pixelRays
+	for (int x = 0; x < m_viewPlane.resolutionX; x++)
+	{
+		for (int y = 0; y < m_viewPlane.resolutionY; y++)
+		{
+		}
+	}
 
 }
 
