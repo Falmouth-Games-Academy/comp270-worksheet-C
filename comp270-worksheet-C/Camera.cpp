@@ -62,13 +62,23 @@ const Image& Camera::updateScreenBuffer(const std::vector<Object*>& objects)
 void Camera::generateRays()
 {
 	m_pixelRays.clear();
+	m_pixelRays.resize(m_viewPlane.resolutionX);
+	Vector3D pixelPos = Vector3D();
 	// TODO: store the ray direction (in camera space through each pixel of the subdivided view plane,
 	// and store it at an appropriate index of m_pixelRays
-	for (int x = 0; x < m_viewPlane.resolutionX; x++)
+	for (unsigned int x = 0; x < m_viewPlane.resolutionX; x++)
 	{
-		for (int y = 0; y < m_viewPlane.resolutionY; y++)
+		m_pixelRays[x].resize(m_viewPlane.resolutionY);
+		for (unsigned int y = 0; y < m_viewPlane.resolutionY; y++)
 		{
+			pixelPos.x = x;
+			pixelPos.y = y;
+			pixelPos.z = 1;
+			m_pixelRays[x][y] = pixelPos;
 		}
+		std::cout << m_pixelRays[x][1].x << ", ";
+		std::cout << m_pixelRays[x][1].y << ", ";
+		std::cout << m_pixelRays[x][1].z << std::endl;
 	}
 
 }
