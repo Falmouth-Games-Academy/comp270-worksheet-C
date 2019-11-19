@@ -64,7 +64,7 @@ void Camera::generateRays()
 {
 	auto start_time = std::chrono::high_resolution_clock::now();	// start timer to see how long it take to gen rays
 
-	//m_pixelRays.clear();	// really??
+	//m_pixelRays.clear();	// really...
 	// TODO: store the ray direction (in camera space through each pixel of the subdivided view plane,
 	// and store it at an appropriate index of m_pixelRays
 
@@ -116,10 +116,55 @@ void Camera::updateWorldTransform()
 {
 	// TODO: the following code creates a transform for a camera with translation only
 	// (with the view direction along the negative z-axis); update it to handle rotations, too.
-	m_worldToCameraTransform(0, 3) = -m_position.x;
-	m_worldToCameraTransform(1, 3) = -m_position.y;
-	m_worldToCameraTransform(2, 3) = m_position.z;
+
+	// Rotate in z,y,x order
+
+	// rotate around the Z
+	// BUG: does not rotate when postion is zero :( (probly happens to all)
+
+	Vector3D dif = m_position.asVector() - Vector3D(1, 1, 1);	// BUG Fix... ??? ... :S 
+																// ... Dammm i need to learn more about this ... :D
+
+	Matrix3D rZ = Matrix3D();
+	rZ(0, 0) = cos(m_rotation.z);
+	rZ(1, 0) = -sin(m_rotation.z);
+	rZ(0, 1) = sin(m_rotation.z);
+	rZ(1, 1) = cos(m_rotation.z);
+
+	Vector3D p = rZ * dif;
+
+	// rotate around Y
+	Matrix3D rY = Matrix3D();
+	rY(0, 0) = cos(m_rotation.y);
+	rY(2, 0) = -sin(m_rotation.y);
+
+	rY(0, 2) = sin(m_rotation.y);
+	rY(2, 2) = cos(m_rotation.y);
+
+	p = rY * p;
+	
+	// rotate around X
+	Matrix3D rX = Matrix3D();
+	rX(1, 1) = cos(m_rotation.x);
+	rX(2, 1) = -sin(m_rotation.x);
+
+	rX(1, 2) = sin(m_rotation.x);
+	rX(2, 2) = cos(m_rotation.x);
+
+	p = rX * p;
+	
+	// Applie the rotation to the world to cam transform.
+	m_worldToCameraTransform(0, 3) = -p.x;// +m_position.x;
+	m_worldToCameraTransform(1, 3) = -p.y;// +m_position.y;
+	m_worldToCameraTransform(2, 3) = p.z;// +m_position.z;
 	m_worldToCameraTransform(2, 2) = -1.0f;
+
+	
+
+	std::cout << p.x << "," << p.y << "," << p.z << " rx: "<< rZ(1, 1) << std::endl;
+	std::cout << m_position.x << "," << m_position.y << "," << m_position.z << std::endl;
+	std::cout << m_rotation.x << "," << m_rotation.y << "," << m_rotation.z << std::endl;
+
 }
 
 // Sets the colour of a given pixel on the screen buffer based on the closest object

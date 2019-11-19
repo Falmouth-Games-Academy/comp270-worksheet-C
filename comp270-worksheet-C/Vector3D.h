@@ -45,4 +45,15 @@ public:
 	{
 		return Vector3D(x * scalar, y * scalar, z * scalar);
 	}
+
+	Vector3D operator-(Vector3D vect)
+	{
+		return Vector3D(x - vect.x, y - vect.y, z - vect.z);
+	}
+
+	Vector3D operator+(Vector3D vect)
+	{
+		return Vector3D(x + vect.x, y + vect.y, z + vect.z);
+	}
+
 };
