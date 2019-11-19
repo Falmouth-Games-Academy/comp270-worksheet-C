@@ -132,9 +132,9 @@ void Application::processEvent(const SDL_Event &ev)
 		else if (ev.key.keysym.sym == SDLK_e)
 			shiftMod ? m_camera.rotateZ(0.1f) : m_camera.translateZ(1.0f);
 		else if (ev.key.keysym.sym == SDLK_UP)
-			m_camera.zoom(0.1f);
+			m_camera.zoom(1.0f);// (0.1f);
 		else if (ev.key.keysym.sym == SDLK_DOWN)
-			m_camera.zoom(-0.1f);
+			m_camera.zoom(-1.0f);// (-0.1f);
 		break;
 	}
 	default:
