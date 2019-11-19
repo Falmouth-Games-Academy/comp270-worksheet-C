@@ -62,9 +62,9 @@ const Image& Camera::updateScreenBuffer(const std::vector<Object*>& objects)
 // Generates and stores rays from the camera through the centre of each pixel, in camera space
 void Camera::generateRays()
 {
-	auto start = std::chrono::high_resolution_clock::now();
+	auto start_time = std::chrono::high_resolution_clock::now();	// start timer to see how long it take to gen rays
 
-	m_pixelRays.clear();	// really??
+	//m_pixelRays.clear();	// really??
 	// TODO: store the ray direction (in camera space through each pixel of the subdivided view plane,
 	// and store it at an appropriate index of m_pixelRays
 
@@ -80,8 +80,8 @@ void Camera::generateRays()
 	for (int i = 0; i < m_viewPlane.resolutionX; i++)
 	{
 
-		
-		m_pixelRays.push_back( std::vector<Vector3D>() );
+		if ( i == m_pixelRays.size() )
+			m_pixelRays.push_back( std::vector<Vector3D>() );
 
 		for (int j = 0; j < m_viewPlane.resolutionY; j++)
 		{
@@ -94,14 +94,19 @@ void Camera::generateRays()
 			normalise_ray_vector.normalise();
 			
 			// Add Value to vector.
-			m_pixelRays[i].push_back(normalise_ray_vector );
+			if ( j == m_pixelRays[i].size() )
+				m_pixelRays[i].push_back(normalise_ray_vector );
+			else
+				m_pixelRays[i][j] = normalise_ray_vector;
+
 		}
 
 	}
 	
+	// print to console the amount of time it tock to gen rays.
 	auto end_time = std::chrono::high_resolution_clock::now();
-	auto dur = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start);
-	std::cout << "Ex Time: " << dur.count() << std::endl;
+	auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+	std::cout << "Ex Time: " << dur.count() << "ms" << std::endl;
 
 }
 
