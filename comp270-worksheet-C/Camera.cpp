@@ -60,12 +60,18 @@ const Image& Camera::updateScreenBuffer(const std::vector<Object*>& objects)
 // Generates and stores rays from the camera through the centre of each pixel, in camera space
 void Camera::generateRays()
 {
-	m_pixelRays.clear();
+	m_pixelRays.clear();	// really??
 	// TODO: store the ray direction (in camera space through each pixel of the subdivided view plane,
 	// and store it at an appropriate index of m_pixelRays
-	float xx = 0;
-	float yy = 0;
-	float zz = 0;
+
+	// Get half the amount of samples so we can get the value in the range of -halfWidth, +halfWidth
+	float half_samples_x = (m_viewPlane.resolutionX / 2.0f);
+	float half_samples_y = (m_viewPlane.resolutionY / 2.0f);
+
+	// define our samples var and get the view plan distance.
+	float sample_x = 0;
+	float sample_y = 0;
+	float sample_plane_distance = m_viewPlane.distance;	// we can do this out side of the loop's as its the sames for all samples
 
 	for (int i = 0; i < m_viewPlane.resolutionX; i++)
 	{
@@ -74,15 +80,16 @@ void Camera::generateRays()
 
 		for (int j = 0; j < m_viewPlane.resolutionY; j++)
 		{
-			float xx = (i / (m_viewPlane.resolutionX / 2.0f) - 1.0f) * m_viewPlane.halfWidth;
-			float yy = (j / (m_viewPlane.resolutionY / 2.0f) - 1.0f) * m_viewPlane.halfHeight;
-			float zz = m_viewPlane.distance;
-
-
-			Vector3D vect = Vector3D(xx, yy, zz);
-			vect.normalise();
-
-			m_pixelRays[i].push_back( vect );
+			// samples in range of -halfWidth, +halfWidth
+			sample_x = (i / half_samples_x - 1.0f) * m_viewPlane.halfWidth;
+			sample_y = (j / half_samples_y - 1.0f) * m_viewPlane.halfHeight;
+			
+			// nomalize it so we only have the direction form the COV
+			Vector3D normalise_ray_vector = Vector3D(sample_x, sample_y, sample_plane_distance);
+			normalise_ray_vector.normalise();
+			
+			// Add Value to vector.
+			m_pixelRays[i].push_back(normalise_ray_vector );
 		}
 
 	}
