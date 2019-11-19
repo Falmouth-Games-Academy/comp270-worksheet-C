@@ -27,7 +27,9 @@ bool Plane::getIntersection(const Point3D& raySrc, const Vector3D& rayDir, float
 {
 	// TODO: implement the ray-plane intersection test, returning true if the ray passes through the plane at a
 	// point within the width/height bounds (if applicable).
-	
+
+	// i dont know...
+
 	return false;
 }
 
@@ -49,6 +51,8 @@ void Plane::applyTransformation(const Matrix3D & matrix)
 //	distToFirstIntersection	distance along the ray from the starting point of the first intersection with the sphere (output)
 bool Sphere::getIntersection(const Point3D& raySrc, const Vector3D& rayDir, float& distToFirstIntersection) const
 {
+	//std::cout << "x: " << raySrc.x << " y: " << raySrc.y << " z: " << raySrc.z << std::endl;
+
 	// Find the point on the ray closest to the sphere's centre
 	Vector3D srcToCentre = m_centre - raySrc;
 	float tc = srcToCentre.dot(rayDir);
