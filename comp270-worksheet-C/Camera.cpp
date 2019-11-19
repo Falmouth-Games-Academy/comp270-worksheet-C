@@ -2,6 +2,8 @@
 #include "Camera.h"
 #include "Object.h"
 
+#include <chrono>
+
 // Initialises the camera at the given position
 void Camera::init(const Point3D& pos)
 {
@@ -60,6 +62,8 @@ const Image& Camera::updateScreenBuffer(const std::vector<Object*>& objects)
 // Generates and stores rays from the camera through the centre of each pixel, in camera space
 void Camera::generateRays()
 {
+	auto start = std::chrono::high_resolution_clock::now();
+
 	m_pixelRays.clear();	// really??
 	// TODO: store the ray direction (in camera space through each pixel of the subdivided view plane,
 	// and store it at an appropriate index of m_pixelRays
@@ -76,6 +80,7 @@ void Camera::generateRays()
 	for (int i = 0; i < m_viewPlane.resolutionX; i++)
 	{
 
+		
 		m_pixelRays.push_back( std::vector<Vector3D>() );
 
 		for (int j = 0; j < m_viewPlane.resolutionY; j++)
@@ -94,6 +99,9 @@ void Camera::generateRays()
 
 	}
 	
+	auto end_time = std::chrono::high_resolution_clock::now();
+	auto dur = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start);
+	std::cout << "Ex Time: " << dur.count() << std::endl;
 
 }
 
