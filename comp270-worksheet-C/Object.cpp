@@ -29,18 +29,20 @@ bool Plane::getIntersection(const Point3D& raySrc, const Vector3D& rayDir, float
 	// point within the width/height bounds (if applicable).
 
 	Vector3D planePoint_w = ((m_wDir * 0.36f) * (m_halfWidth * 2.0f)) + m_centre.asVector();
-	Vector3D planePoint_h = ((m_hDir * 0.75f) * (m_halfHeight * 2.0f)) + m_centre.asVector();
+	Vector3D planePoint_h = ((m_hDir * 0.75f) * (m_halfHeight * 2.0f))+ m_centre.asVector();
 
 	Vector3D plane = ( planePoint_w - planePoint_h );
 	Vector3D planN = plane * m_normal;
-	float sum = planN.sum();
+	float sum = planN.magnitude();// sum();
 
-	float t = ((planePoint_w - raySrc.asVector()) * m_normal).sum();
-	t /= (rayDir * m_normal).sum();
+	float t = ((plane - raySrc.asVector()) * m_normal).sum();
+		t /= (rayDir * m_normal).sum();
 
-	//std::cout << "X: "<< plane.x << " Y: " << plane.y << " Z: " << plane.z << " n.x: " << m_normal.x << " n.y: " << m_normal.z << " n.z: " << m_normal.z << " Sum: " << sum << std::endl;
+	std::cout << "X: "<< plane.x << " Y: " << plane.y << " Z: " << plane.z << " n.x: " << m_normal.x << " n.y: " << m_normal.z << " n.z: " << m_normal.z << " Sum: " << sum << std::endl;
+	std::cout << "t: " << t << " rn: " << (rayDir * m_normal).sum()/*<< " tVal: " << tVal */<< std::endl;
 
-	float tVal = ((m_normal * t) + (raySrc.asVector() - planePoint_w) * m_normal).sum();	//????
+	float tVal = 1.0f;//((m_normal * (rayDir * t)) + (raySrc.asVector() - plane) * m_normal).sum();	//????
+
 	if (tVal == 0.0f)
 	{
 		std::cout << "t: " << t << " tVal: " << tVal << std::endl;
