@@ -46,21 +46,6 @@ public:
 		return Vector3D(x * scalar, y * scalar, z * scalar);
 	}
 
-	Vector3D operator*(Vector3D vect) const
-	{
-		return Vector3D(x * vect.x, y * vect.y, z * vect.z);
-	}
-
-	Vector3D operator/(Vector3D vect) const
-	{
-
-		float vx = (vect.x == 0 ? 0 : x / vect.x);
-		float vy = (vect.y == 0 ? 0 : y / vect.y);
-		float vz = (vect.z == 0 ? 0 : z / vect.z);
-
-		return Vector3D(vx, vy, vz);
-	}
-
 	Vector3D operator-(Vector3D vect)
 	{
 		return Vector3D(x - vect.x, y - vect.y, z - vect.z);
@@ -69,11 +54,6 @@ public:
 	Vector3D operator+(Vector3D vect)
 	{
 		return Vector3D(x + vect.x, y + vect.y, z + vect.z);
-	}
-
-	float sum() const
-	{
-		return x + y + z;
 	}
 
 };
