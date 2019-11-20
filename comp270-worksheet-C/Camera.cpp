@@ -61,10 +61,34 @@ const Image& Camera::updateScreenBuffer(const std::vector<Object*>& objects)
 // Generates and stores rays from the camera through the centre of each pixel, in camera space
 void Camera::generateRays()
 {
-	m_pixelRays.clear();
-	// TODO: store the ray direction (in camera space through each pixel of the subdivided view plane,
-	// and store it at an appropriate index of m_pixelRays
+	Vector3D rayDir = Vector3D();
+	//get quarter of the height and width for the ray calculation
+	float quarterWidth = m_viewPlane.halfWidth * 0.5f;
+	float quarterHeight = m_viewPlane.halfHeight * 0.5f;
+	//get the image resolution
+	std::vector<float> resolution(2);
+	resolution[0] = m_viewPlane.resolutionX;
+	resolution[1] = m_viewPlane.resolutionY;
 
+	m_pixelRays.resize(resolution[0]);
+	for (unsigned int x = 0; x < resolution[0]; x++)
+	{
+		m_pixelRays[x].resize(resolution[1]);
+		for (unsigned int y = 0; y < resolution[1]; y++)
+		{
+			//calculate the ray
+			rayDir.x = x / resolution[0] * m_viewPlane.halfWidth - quarterWidth;
+			rayDir.y = y / resolution[1] * m_viewPlane.halfHeight - quarterHeight;
+			rayDir.z = m_viewPlane.distance;
+			//normalise to get only direction
+			rayDir.normalise();
+			//apply to array
+			m_pixelRays[x][y] = rayDir;
+		}
+		std::cout << m_pixelRays[x][1].x << ", ";
+		std::cout << m_pixelRays[x][1].y << ", ";
+		std::cout << m_pixelRays[x][1].z << std::endl;
+	}
 }
 
 // Computes the transformation that will take objects from world to camera coordinates
