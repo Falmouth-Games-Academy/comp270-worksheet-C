@@ -46,6 +46,31 @@ const Image& Camera::updateScreenBuffer(const std::vector<Object*>& objects)
 				}
 			}
 
+			// Create an outline for all objects
+			float dirs[4][2] = { {-1,  -1}, {-1, 1}, {1, 1}, {1, 1} };
+			for (unsigned i = 1; i < m_viewPlane.resolutionX - 1; ++i)
+			{
+				for (unsigned j = 1; j < m_viewPlane.resolutionY - 1; ++j)
+				{
+					for (unsigned k = 0; k < 4; ++k)
+					{
+						if (m_screenBuf.getPixel(i + dirs[0][k], j + dirs[1][k]).r > 0 &&
+							m_screenBuf.getPixel(i + dirs[0][k], j + dirs[1][k]).g > 0 &&
+							m_screenBuf.getPixel(i + dirs[0][k], j + dirs[1][k]).b > 0)
+						{
+							int r = m_screenBuf.getPixel(i, j).r - m_screenBuf.getPixel(i + dirs[0][k], j + dirs[1][k]).r;
+							int g = m_screenBuf.getPixel(i, j).g - m_screenBuf.getPixel(i + dirs[0][k], j + dirs[1][k]).g;
+							int b = m_screenBuf.getPixel(i, j).b - m_screenBuf.getPixel(i + dirs[0][k], j + dirs[1][k]).b;
+
+							if (r != 0 || g != 0 || b != 0)
+							{
+								m_screenBuf.setPixel(i, j, Colour(0, 0, 0));
+							}
+						}
+					}
+				}
+			}
+
 			// Now put the objects back!
 			const Matrix3D cameraToWorldTransform = m_worldToCameraTransform.inverseTransform();
 			for (auto obj : objects)
@@ -130,13 +155,15 @@ void Camera::updateWorldTransform()
 	rotation_z(2, 2) = 1;
 	rotation_z(3, 3) = 1;
 
-	m_worldToCameraTransform = m_worldToCameraTransform * rotation_x * rotation_y * rotation_z;
+	//m_rotation = Vector3D();
 
+	m_worldToCameraTransform = rotation_x * rotation_y * rotation_z * m_worldToCameraTransform;
 	// TODO: the following code creates a transform for a camera with translation only
 	// (with the view direction along the negative z-axis); update it to handle rotations, too.
 	m_worldToCameraTransform(0, 3) = -m_position.x;
 	m_worldToCameraTransform(1, 3) = -m_position.y;
 	m_worldToCameraTransform(2, 3) = m_position.z;
+
 	m_worldToCameraTransform(2, 2) = -1.0f;
 }
 
