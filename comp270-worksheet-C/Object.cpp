@@ -28,7 +28,26 @@ bool Plane::getIntersection(const Point3D& raySrc, const Vector3D& rayDir, float
 	// TODO: implement the ray-plane intersection test, returning true if the ray passes through the plane at a
 	// point within the width/height bounds (if applicable).
 
-	// i dont know...
+	Vector3D planePoint_w = ((m_wDir * 0.36f) * (m_halfWidth * 2.0f)) + m_centre.asVector();
+	Vector3D planePoint_h = ((m_hDir * 0.75f) * (m_halfHeight * 2.0f)) + m_centre.asVector();
+
+	Vector3D plane = ( planePoint_w - planePoint_h );
+	Vector3D planN = plane * m_normal;
+	float sum = planN.sum();
+
+	float t = ((planePoint_w - raySrc.asVector()) * m_normal).sum();
+	t /= (rayDir * m_normal).sum();
+
+	//std::cout << "X: "<< plane.x << " Y: " << plane.y << " Z: " << plane.z << " n.x: " << m_normal.x << " n.y: " << m_normal.z << " n.z: " << m_normal.z << " Sum: " << sum << std::endl;
+
+	float tVal = ((m_normal * t) + (raySrc.asVector() - planePoint_w) * m_normal).sum();	//????
+	if (tVal == 0.0f)
+	{
+		std::cout << "t: " << t << " tVal: " << tVal << std::endl;
+		distToFirstIntersection = t;
+		return true;
+	}
+
 
 	return false;
 }
