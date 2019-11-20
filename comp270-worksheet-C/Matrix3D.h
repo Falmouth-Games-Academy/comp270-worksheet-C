@@ -45,6 +45,22 @@ public:
 		return result;
 	}
 
+	// Add two matrices together
+	Matrix3D operator+(const Matrix3D& other)
+	{
+		Matrix3D result(other);
+
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				result(i, j) = this->m_[i][j] + other.m_[i][j];
+			}
+		}
+
+		return result;
+	}
+
 	Matrix3D inverseTransform() const;
 
 private:
