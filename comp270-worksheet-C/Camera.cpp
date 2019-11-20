@@ -65,8 +65,6 @@ void Camera::generateRays()
 	auto start_time = std::chrono::high_resolution_clock::now();	// start timer to see how long it take to gen rays
 
 	//m_pixelRays.clear();	// really...
-	// TODO: store the ray direction (in camera space through each pixel of the subdivided view plane,
-	// and store it at an appropriate index of m_pixelRays
 
 	// Get half the amount of samples so we can get the value in the range of -halfWidth, +halfWidth
 	float half_samples_x = (m_viewPlane.resolutionX / 2.0f);
