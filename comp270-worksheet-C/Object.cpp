@@ -28,7 +28,39 @@ bool Plane::getIntersection(const Point3D& raySrc, const Vector3D& rayDir, float
 	// TODO: implement the ray-plane intersection test, returning true if the ray passes through the plane at a
 	// point within the width/height bounds (if applicable).
 	
+	Vector3D pointOnPlane = m_centre.asVector();
+	Vector3D otherPointOnPlane = pointOnPlane + m_hDir * (m_halfWidth*0.1f);
+	Vector3D planeNorm = m_normal;
+
+	Vector3D minVectW = pointOnPlane - (m_wDir * m_halfWidth);
+	Vector3D maxVectW = pointOnPlane + (m_wDir * m_halfWidth);
+
+	Vector3D minVectH = pointOnPlane - (m_hDir * m_halfHeight);
+	Vector3D maxVectH = pointOnPlane + (m_hDir * m_halfHeight);
+
+	float zero = (pointOnPlane - otherPointOnPlane).dot(planeNorm);
+	float t = (pointOnPlane - raySrc.asVector()).dot(planeNorm) / rayDir.dot( m_normal );
+
+	Vector3D hitPosition = raySrc.asVector() + (rayDir * t);
+	Vector3D hitFromCenter = m_centre.asVector() - hitPosition;
+
+	//std::cout << "min V: x: " << minVect.x << " y: " << minVect.y << " z: " << minVect.z << " hp V: x: " << hitPosition.x << " y: " << hitPosition.y << " z: " << hitPosition.z << std::endl;
+
+	float planeHit = ((raySrc.asVector() + (rayDir * t)) - pointOnPlane).dot(m_normal);
+
+	// is the ray hit in range of the planes bounds.
+	bool boundsZ = minVectW.z <= hitPosition.z && maxVectW.z >= hitPosition.z;
+	bool boundsY = minVectH.y <= hitPosition.y && maxVectH.y >= hitPosition.y;
+	bool boundsX = minVectW.x <= hitPosition.x && maxVectW.x >= hitPosition.x;
+
+	if (planeHit == 0 && boundsZ && boundsY && boundsX)
+	{
+		distToFirstIntersection = (hitPosition - raySrc.asVector()).magnitude();
+		return true;
+	}
+
 	return false;
+
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -49,6 +81,8 @@ void Plane::applyTransformation(const Matrix3D & matrix)
 //	distToFirstIntersection	distance along the ray from the starting point of the first intersection with the sphere (output)
 bool Sphere::getIntersection(const Point3D& raySrc, const Vector3D& rayDir, float& distToFirstIntersection) const
 {
+	//std::cout << "x: " << raySrc.x << " y: " << raySrc.y << " z: " << raySrc.z << std::endl;
+
 	// Find the point on the ray closest to the sphere's centre
 	Vector3D srcToCentre = m_centre - raySrc;
 	float tc = srcToCentre.dot(rayDir);
