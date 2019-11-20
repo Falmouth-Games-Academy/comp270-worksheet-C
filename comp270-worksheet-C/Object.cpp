@@ -28,22 +28,28 @@ bool Plane::getIntersection(const Point3D& raySrc, const Vector3D& rayDir, float
 	// TODO: implement the ray-plane intersection test, returning true if the ray passes through the plane at a
 	// point within the width/height bounds (if applicable).
 
-	/*p*/ Vector3D planePoint_w = (m_centre.asVector() - (m_wDir * m_halfWidth)) + (m_halfWidth * 0.75f); // (m_wDir * (m_halfWidth * 2.0f));
-//	std::cout << "ppw x: " << planePoint_w.x << " ppw y: " << planePoint_w.y << " ppw z: " << planePoint_w.z << " sum: " << planePoint_w.sum() << std::endl;
+	Vector3D pointOnPlane = m_centre.asVector();
 
-	/*b*/ Vector3D planePoint_h = (m_centre.asVector() - (m_hDir * m_halfHeight)) + (m_halfHeight * 0.9f);// * (m_halfHeight * 2.0f)) + m_centre.asVector();
-//	std::cout << "pph x: " << planePoint_h.x << " pph y: " << planePoint_h.y << " pph z: " << planePoint_h.z << " sum: " << planePoint_h.sum() << std::endl;
+
+
+	return false;
+
+	/*p*/ Vector3D planePoint_w = (m_centre.asVector() - (m_wDir * m_halfWidth)) + (m_halfWidth * 0.75f); // (m_wDir * (m_halfWidth * 2.0f));
+	std::cout << "ppw x: " << planePoint_w.x << " ppw y: " << planePoint_w.y << " ppw z: " << planePoint_w.z << " sum: " << planePoint_w.sum() << std::endl;
+
+	/*b*/ Vector3D planePoint_h = m_normal * (m_halfHeight * 0.9f);// * (m_halfHeight * 2.0f)) + m_centre.asVector();
+	std::cout << "pph x: " << planePoint_h.x << " pph y: " << planePoint_h.y << " pph z: " << planePoint_h.z << " sum: " << planePoint_h.sum() << std::endl;
 
 	float p = (m_normal.x * (planePoint_h.x - planePoint_w.x)) + (m_normal.y * (planePoint_h.y - planePoint_w.y)) + (m_normal.z * (planePoint_h.z - planePoint_w.z));
-	std::cout << "t: " << p << std::endl;
+	//std::cout << "t: " << p << std::endl;
 
 	Vector3D plane = (planePoint_w - planePoint_h);
-	Vector3D planN = plane *m_normal;
+	Vector3D planN = plane * m_normal;
 	float sum = planN.sum();
-	std::cout << "sum: " << sum << std::endl;
+	//std::cout << "sum: " << sum << std::endl;
 
 	float tt = (((planePoint_h - raySrc.asVector()) * m_normal) / (rayDir * m_normal)).sum();
-	//if (tt == 0)
+	if (tt == 0)
 		std::cout << "tt: " << tt << std::endl;
 
 	return false;
