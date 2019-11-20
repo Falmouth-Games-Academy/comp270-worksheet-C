@@ -120,7 +120,7 @@ void Camera::updateWorldTransform()
 	// rotate around the Z
 	// BUG: does not rotate when postion is zero :( (probly happens to all)
 
-	Vector3D dif = m_position.asVector() - Vector3D(1, 1, 1);	// BUG Fix... ??? ... :S 
+	Vector3D dif = m_position.asVector();// -Vector3D(1, 1, 1);	// BUG Fix... ??? ... :S 
 																// ... Dammm i need to learn more about this ... :D
 
 	Matrix3D rZ = Matrix3D();

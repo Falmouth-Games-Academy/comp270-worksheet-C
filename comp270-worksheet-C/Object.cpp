@@ -27,13 +27,16 @@ bool Plane::getIntersection(const Point3D& raySrc, const Vector3D& rayDir, float
 {
 	// TODO: implement the ray-plane intersection test, returning true if the ray passes through the plane at a
 	// point within the width/height bounds (if applicable).
-
+	
 	Vector3D pointOnPlane = m_centre.asVector();
 	Vector3D otherPointOnPlane = pointOnPlane + m_hDir * (m_halfWidth*0.1f);
 	Vector3D planeNorm = m_normal;
 
-	Vector3D minVect = pointOnPlane - (m_wDir * m_halfWidth);
-	Vector3D maxVect = pointOnPlane + (m_hDir * m_halfHeight);
+	Vector3D minVectW = pointOnPlane - (m_wDir * m_halfWidth);
+	Vector3D maxVectW = pointOnPlane + (m_wDir * m_halfWidth);
+
+	Vector3D minVectH = pointOnPlane - (m_hDir * m_halfHeight);
+	Vector3D maxVectH = pointOnPlane + (m_hDir * m_halfHeight);
 
 	float zero = (pointOnPlane - otherPointOnPlane).dot(planeNorm);
 	float t = (pointOnPlane - raySrc.asVector()).dot(planeNorm) / rayDir.dot( m_normal );
@@ -46,9 +49,9 @@ bool Plane::getIntersection(const Point3D& raySrc, const Vector3D& rayDir, float
 	float planeHit = ((raySrc.asVector() + (rayDir * t)) - pointOnPlane).dot(m_normal);
 
 	// is the ray hit in range of the planes bounds.
-	bool boundsZ = minVect.z <= hitPosition.z && maxVect.z >= hitPosition.z;
-	bool boundsY = minVect.y <= hitPosition.y && maxVect.y >= hitPosition.y;
-	bool boundsX = minVect.x <= hitPosition.x && maxVect.x >= hitPosition.x;
+	bool boundsZ = minVectW.z <= hitPosition.z && maxVectW.z >= hitPosition.z;
+	bool boundsY = minVectH.y <= hitPosition.y && maxVectH.y >= hitPosition.y;
+	bool boundsX = minVectW.x <= hitPosition.x && maxVectW.x >= hitPosition.x;
 
 	if (planeHit == 0 && boundsZ && boundsY && boundsX)
 	{
