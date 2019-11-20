@@ -45,4 +45,22 @@ public:
 	{
 		return Vector3D(x * scalar, y * scalar, z * scalar);
 	}
+
+	// Divide the vector by a scalar
+	Vector3D operator/(float scalar) const
+	{
+		return Vector3D(x / scalar, y / scalar, z / scalar);
+	}
+
+	// Add 2 vectors together
+	Vector3D operator+(const Vector3D &other) const
+	{
+		return Vector3D(x + other.x, y + other.y, z + other.z);
+	}
+
+	// Subtract 2 vectors together
+	Vector3D operator-(const Vector3D &other) const
+	{
+		return Vector3D(x - other.x, y - other.y, z - other.z);
+	}
 };

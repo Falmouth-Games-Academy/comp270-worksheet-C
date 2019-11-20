@@ -46,6 +46,31 @@ const Image& Camera::updateScreenBuffer(const std::vector<Object*>& objects)
 				}
 			}
 
+			// Create an outline for all objects
+			float dirs[4][2] = { {-1,  -1}, {-1, 1}, {1, 1}, {1, 1} };
+			for (unsigned i = 1; i < m_viewPlane.resolutionX - 1; ++i)
+			{
+				for (unsigned j = 1; j < m_viewPlane.resolutionY - 1; ++j)
+				{
+					for (unsigned k = 0; k < 4; ++k)
+					{
+						if (m_screenBuf.getPixel(i + dirs[0][k], j + dirs[1][k]).r > 0 &&
+							m_screenBuf.getPixel(i + dirs[0][k], j + dirs[1][k]).g > 0 &&
+							m_screenBuf.getPixel(i + dirs[0][k], j + dirs[1][k]).b > 0)
+						{
+							int r = m_screenBuf.getPixel(i, j).r - m_screenBuf.getPixel(i + dirs[0][k], j + dirs[1][k]).r;
+							int g = m_screenBuf.getPixel(i, j).g - m_screenBuf.getPixel(i + dirs[0][k], j + dirs[1][k]).g;
+							int b = m_screenBuf.getPixel(i, j).b - m_screenBuf.getPixel(i + dirs[0][k], j + dirs[1][k]).b;
+
+							if (r != 0 || g != 0 || b != 0)
+							{
+								m_screenBuf.setPixel(i, j, Colour(0, 0, 0));
+							}
+						}
+					}
+				}
+			}
+
 			// Now put the objects back!
 			const Matrix3D cameraToWorldTransform = m_worldToCameraTransform.inverseTransform();
 			for (auto obj : objects)
@@ -64,6 +89,33 @@ void Camera::generateRays()
 	m_pixelRays.clear();
 	// TODO: store the ray direction (in camera space through each pixel of the subdivided view plane,
 	// and store it at an appropriate index of m_pixelRays
+	
+	std::vector<Vector3D> column = std::vector<Vector3D>();
+
+	// Positions on the plane the rays will intersect
+	float plane_x = -m_viewPlane.halfWidth;
+	float plane_y = -m_viewPlane.halfHeight;
+
+	float dist_x = (m_viewPlane.halfWidth * 2.0) / m_viewPlane.resolutionX;
+	float dist_y = (m_viewPlane.halfHeight * 2.0) / m_viewPlane.resolutionY;
+
+	// Loop through the subdivided plane
+	for (int y = 0; y < m_viewPlane.resolutionY; y++)
+	{
+		for (int x = 0; x < m_viewPlane.resolutionX; x++)
+		{
+			// Create new ray
+			Vector3D ray = Vector3D(plane_x, plane_y, m_viewPlane.distance);
+			ray.normalise();
+			column.emplace_back(ray);
+
+			plane_x += dist_x;
+		}
+		plane_x = -m_viewPlane.halfWidth;
+		plane_y += dist_y;
+		m_pixelRays.emplace_back(column);
+		column.clear();
+	}
 
 }
 
@@ -71,11 +123,47 @@ void Camera::generateRays()
 // and stores it in m_worldToCameraTransform
 void Camera::updateWorldTransform()
 {
+
+	Matrix3D rotation_x = Matrix3D();
+	Matrix3D rotation_y = Matrix3D();
+	Matrix3D rotation_z = Matrix3D();
+
+	float theta = m_rotation.x;
+
+	rotation_x(0, 0) = 1;
+	rotation_x(1, 1) = cos(theta);
+	rotation_x(1, 2) = -sin(theta);
+	rotation_x(2, 1) = sin(theta);
+	rotation_x(2, 2) = cos(theta);
+	rotation_x(3, 3) = 1;
+
+	theta = m_rotation.y;
+
+	rotation_y(0, 0) = cos(theta);
+	rotation_y(1, 1) = 1;
+	rotation_y(0, 1) = sin(theta);
+	rotation_y(2, 0) = -sin(theta);
+	rotation_y(2, 2) = cos(theta);
+	rotation_y(3, 3) = 1;
+
+	theta = m_rotation.z;
+
+	rotation_z(0, 0) = cos(theta);
+	rotation_z(0, 1) = -sin(theta);
+	rotation_z(1, 0) = sin(theta);
+	rotation_z(1, 1) = cos(theta);
+	rotation_z(2, 2) = 1;
+	rotation_z(3, 3) = 1;
+
+	//m_rotation = Vector3D();
+
+	m_worldToCameraTransform = rotation_x * rotation_y * rotation_z * m_worldToCameraTransform;
 	// TODO: the following code creates a transform for a camera with translation only
 	// (with the view direction along the negative z-axis); update it to handle rotations, too.
 	m_worldToCameraTransform(0, 3) = -m_position.x;
 	m_worldToCameraTransform(1, 3) = -m_position.y;
 	m_worldToCameraTransform(2, 3) = m_position.z;
+
 	m_worldToCameraTransform(2, 2) = -1.0f;
 }
 

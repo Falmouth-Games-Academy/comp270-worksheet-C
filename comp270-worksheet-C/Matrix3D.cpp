@@ -10,10 +10,27 @@ Matrix3D Matrix3D::inverseTransform() const
 	
 	// TODO: the following code will invert a matrix that only performs a translation and z-axis flip;
 	// update it to handle a general matrix representing affine transformations (rotation, translation, scale).
-	inverse(0, 3) = -m_[0][3];
-	inverse(1, 3) = -m_[1][3];
-	inverse(2, 3) = m_[2][3];
-	inverse(2, 2) = -1.0f;
+
+	inverse(0, 0) = m_[0][0];
+	inverse(0, 1) = m_[1][0];
+	inverse(0, 2) = m_[2][0];
+
+	inverse(1, 0) = m_[0][1];
+	inverse(1, 1) = m_[1][1];
+	inverse(1, 2) = m_[2][1];
+
+	inverse(2, 0) = m_[0][2];
+	inverse(2, 1) = m_[1][2];
+	inverse(2, 2) = m_[2][2];
+
+	inverse(0, 3) = m_[0][0] * (-m_[0][3]) + m_[1][0] * (-m_[1][3]) + m_[2][0] * (-m_[2][3]);
+	inverse(1, 3) = m_[0][1] * (-m_[0][3]) + m_[1][1] * (-m_[1][3]) + m_[2][1] * (-m_[2][3]);
+	inverse(2, 3) = m_[0][2] * (-m_[0][3]) + m_[1][2] * (-m_[1][3]) + m_[2][2] * (-m_[2][3]);
+
+	inverse(3, 0) = 0;
+	inverse(3, 1) = 0;
+	inverse(3, 2) = 0;
+	inverse(3, 3) = 1.0f;
 
 	return inverse;
 }

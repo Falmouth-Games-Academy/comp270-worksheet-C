@@ -23,6 +23,12 @@ public:
 		return Point3D(x + vec.x, y + vec.y, z + vec.z);
 	}
 
+	// Returns the point at the given vector displacement from this point
+	Point3D operator-(const Vector3D& vec) const
+	{
+		return Point3D(x - vec.x, y - vec.y, z - vec.z);
+	}
+
 	// Returns the vector difference between two points
 	Vector3D operator-(const Point3D& other) const
 	{
