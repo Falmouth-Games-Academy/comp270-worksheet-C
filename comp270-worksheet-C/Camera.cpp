@@ -62,6 +62,11 @@ const Image& Camera::updateScreenBuffer(const std::vector<Object*>& objects)
 void Camera::generateRays()
 {
 	Vector3D rayDir = Vector3D();
+	//get half of the resolution fot the range calculation
+	Vector3D halfRes = Vector3D();
+	halfRes.x = m_viewPlane.resolutionX * 0.5f;
+	halfRes.y = m_viewPlane.resolutionY * 0.5f;
+
 	m_pixelRays.resize(m_viewPlane.resolutionX);
 	for (unsigned int x = 0; x < m_viewPlane.resolutionX; x++)
 	{
@@ -69,8 +74,8 @@ void Camera::generateRays()
 		for (unsigned int y = 0; y < m_viewPlane.resolutionY; y++)
 		{
 			//calculate points in range
-			rayDir.x = (x / (m_viewPlane.resolutionX * 0.5f) - 1) * m_viewPlane.halfWidth;
-			rayDir.y = (y / (m_viewPlane.resolutionY * 0.5f) - 1) * m_viewPlane.halfHeight;
+			rayDir.x = (x / (halfRes.x) - 1) * m_viewPlane.halfWidth;
+			rayDir.y = (y / (halfRes.y) - 1) * m_viewPlane.halfHeight;
 			rayDir.z = m_viewPlane.distance;
 			//normalise to get only direction
 			rayDir.normalise();
