@@ -62,20 +62,23 @@ const Image& Camera::updateScreenBuffer(const std::vector<Object*>& objects)
 void Camera::generateRays()
 {
 	Vector3D rayDir = Vector3D();
-	//get half of the resolution for the range calculation
-	std::vector<float> halfRes(2);
-	halfRes[0] = m_viewPlane.resolutionX * 0.5f;
-	halfRes[1] = m_viewPlane.resolutionY * 0.5f;
+	//get quarter of the height and width for the ray calculation
+	float quarterWidth = m_viewPlane.halfWidth * 0.5f;
+	float quarterHeight = m_viewPlane.halfHeight * 0.5f;
+	//get the image resolution
+	std::vector<float> resolution(2);
+	resolution[0] = m_viewPlane.resolutionX;
+	resolution[1] = m_viewPlane.resolutionY;
 
-	m_pixelRays.resize(m_viewPlane.resolutionX);
-	for (unsigned int x = 0; x < m_viewPlane.resolutionX; x++)
+	m_pixelRays.resize(resolution[0]);
+	for (unsigned int x = 0; x < resolution[0]; x++)
 	{
-		m_pixelRays[x].resize(m_viewPlane.resolutionY);
-		for (unsigned int y = 0; y < m_viewPlane.resolutionY; y++)
+		m_pixelRays[x].resize(resolution[1]);
+		for (unsigned int y = 0; y < resolution[1]; y++)
 		{
-			//calculate points in range
-			rayDir.x = (x / (halfRes[0]) - 1) * m_viewPlane.halfWidth;
-			rayDir.y = (y / (halfRes[1]) - 1) * m_viewPlane.halfHeight;
+			//calculate the ray
+			rayDir.x = x / resolution[0] * m_viewPlane.halfWidth - quarterWidth;
+			rayDir.y = y / resolution[1] * m_viewPlane.halfHeight - quarterHeight;
 			rayDir.z = m_viewPlane.distance;
 			//normalise to get only direction
 			rayDir.normalise();
