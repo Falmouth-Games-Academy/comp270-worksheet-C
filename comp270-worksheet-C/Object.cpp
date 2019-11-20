@@ -29,8 +29,33 @@ bool Plane::getIntersection(const Point3D& raySrc, const Vector3D& rayDir, float
 	// point within the width/height bounds (if applicable).
 
 	Vector3D pointOnPlane = m_centre.asVector();
+	Vector3D otherPointOnPlane = pointOnPlane + m_wDir * (m_halfWidth*0.1f);
+	Vector3D planeNorm = m_normal;
 
+	Vector3D minVect = pointOnPlane - (m_wDir * m_halfWidth);
+	Vector3D maxVect = pointOnPlane + (m_hDir * m_halfHeight);
 
+//	minVect = minVect + (pointOnPlane - (m_hDir * m_halfHeight));
+
+	float zero = (pointOnPlane - otherPointOnPlane).dot(planeNorm);
+	float t = (pointOnPlane - raySrc.asVector()).dot(planeNorm) / rayDir.dot( m_normal );
+
+	Vector3D hitPosition = raySrc.asVector() + (rayDir * t);
+
+	//std::cout << "min V: x: " << minVect.x << " y: " << minVect.y << " z: " << minVect.z << " hp V: x: " << hitPosition.x << " y: " << hitPosition.y << " z: " << hitPosition.z << std::endl;
+
+	float planeHit = ((raySrc.asVector() + (rayDir * t)) - pointOnPlane).dot(m_normal);// (hitPosition - pointOnPlane).dot(planeNorm); // (rayDir * t).dot(planeNorm) + (raySrc.asVector() - pointOnPlane).dot(planeNorm);
+	// test bounds.
+	bool boundsZ = minVect.z <= hitPosition.z && maxVect.z >= hitPosition.z;
+	bool boundsY = minVect.y <= hitPosition.y && maxVect.y >= hitPosition.y;
+	bool boundsX = minVect.x <= hitPosition.x && maxVect.x >= hitPosition.x;
+
+	if (planeHit == 0 && boundsZ && boundsY && boundsX)
+	{
+		distToFirstIntersection = (hitPosition - raySrc.asVector()).magnitude();
+		return true;
+	}
+	//std::cout << "Zero? " << zero << " t: " << t << " hit: " << hit << std::endl;
 
 	return false;
 
@@ -61,8 +86,8 @@ bool Plane::getIntersection(const Point3D& raySrc, const Vector3D& rayDir, float
 //	Vector3D planN = plane * m_normal;
 //	float sum = planN.magnitude();// sum();
 
-	float t = ((plane - raySrc.asVector()) * m_normal).sum();
-		t /= (rayDir * m_normal).sum();
+//	float t = ((plane - raySrc.asVector()) * m_normal).sum();
+//		t /= (rayDir * m_normal).sum();
 
 	std::cout << "X: "<< plane.x << " Y: " << plane.y << " Z: " << plane.z << " n.x: " << m_normal.x << " n.y: " << m_normal.z << " n.z: " << m_normal.z << " Sum: " << sum << std::endl;
 	std::cout << "t: " << t << " rn: " << (rayDir * m_normal).sum()/*<< " tVal: " << tVal */<< std::endl;
