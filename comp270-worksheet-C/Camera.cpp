@@ -62,9 +62,29 @@ const Image& Camera::updateScreenBuffer(const std::vector<Object*>& objects)
 void Camera::generateRays()
 {
 	m_pixelRays.clear();
-	// TODO: store the ray direction (in camera space through each pixel of the subdivided view plane,
-	// and store it at an appropriate index of m_pixelRays
+	// Set the x size of the Vector
+	m_pixelRays.resize(m_viewPlane.resolutionX);
+	Vector3D rayVector = Vector3D();
+	// Set the half resolution
+	float halfResX = m_viewPlane.resolutionX * 0.5;
+	float halfResY = m_viewPlane.resolutionY * 0.5;
+	// Since the Z will always be set to m_viewPlane.distance we might as well just have it as a pointer. (But also because I need more practice with pointers.)
+	float* cameraDistance = &m_viewPlane.distance;
 
+	for (unsigned int i = 0; i < m_viewPlane.resolutionX; ++i)
+	{
+		m_pixelRays[i].resize(m_viewPlane.resolutionY);
+		for (unsigned int j = 0; j < m_viewPlane.resolutionY; ++j)
+		{
+			// Setting each value individually because readability is fun.
+			rayVector.x = (i / halfResX - 1) * m_viewPlane.halfWidth;
+			rayVector.y = (j / halfResY - 1) * m_viewPlane.halfHeight;
+			rayVector.z = *cameraDistance;
+			
+			rayVector.normalise();
+			m_pixelRays[i][j] = rayVector;
+		}
+	}
 }
 
 // Computes the transformation that will take objects from world to camera coordinates
