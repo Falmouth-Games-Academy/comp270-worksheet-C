@@ -64,7 +64,13 @@ void Camera::generateRays()
 	m_pixelRays.clear();
 	// TODO: store the ray direction (in camera space through each pixel of the subdivided view plane,
 	// and store it at an appropriate index of m_pixelRays
-
+	for (unsigned int i = 0; i < m_viewPlane.resolutionX; ++i)
+	{
+		m_pixelRays.push_back(std::vector<Vector3D>());
+		for (unsigned int j = 0; j < m_viewPlane.resolutionY; ++j) {
+			m_pixelRays[i].push_back(Vector3D((i / m_viewPlane.resolutionX) * m_viewPlane.halfWidth, (j / m_viewPlane.resolutionY) * m_viewPlane.halfHeight, m_viewPlane.distance));
+		}
+	}
 }
 
 // Computes the transformation that will take objects from world to camera coordinates
