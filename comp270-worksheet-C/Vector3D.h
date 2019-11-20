@@ -53,7 +53,12 @@ public:
 
 	Vector3D operator/(Vector3D vect) const
 	{
-		return Vector3D(x / vect.x, y / vect.y, z / vect.z);
+
+		float vx = (vect.x == 0 ? 0 : x / vect.x);
+		float vy = (vect.y == 0 ? 0 : y / vect.y);
+		float vz = (vect.z == 0 ? 0 : z / vect.z);
+
+		return Vector3D(vx, vy, vz);
 	}
 
 	Vector3D operator-(Vector3D vect)
