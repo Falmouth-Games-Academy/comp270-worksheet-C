@@ -29,23 +29,23 @@ bool Plane::getIntersection(const Point3D& raySrc, const Vector3D& rayDir, float
 	// point within the width/height bounds (if applicable).
 
 	Vector3D pointOnPlane = m_centre.asVector();
-	Vector3D otherPointOnPlane = pointOnPlane + m_wDir * (m_halfWidth*0.1f);
+	Vector3D otherPointOnPlane = pointOnPlane + m_hDir * (m_halfWidth*0.1f);
 	Vector3D planeNorm = m_normal;
 
 	Vector3D minVect = pointOnPlane - (m_wDir * m_halfWidth);
 	Vector3D maxVect = pointOnPlane + (m_hDir * m_halfHeight);
 
-//	minVect = minVect + (pointOnPlane - (m_hDir * m_halfHeight));
-
 	float zero = (pointOnPlane - otherPointOnPlane).dot(planeNorm);
 	float t = (pointOnPlane - raySrc.asVector()).dot(planeNorm) / rayDir.dot( m_normal );
 
 	Vector3D hitPosition = raySrc.asVector() + (rayDir * t);
+	Vector3D hitFromCenter = m_centre.asVector() - hitPosition;
 
 	//std::cout << "min V: x: " << minVect.x << " y: " << minVect.y << " z: " << minVect.z << " hp V: x: " << hitPosition.x << " y: " << hitPosition.y << " z: " << hitPosition.z << std::endl;
 
-	float planeHit = ((raySrc.asVector() + (rayDir * t)) - pointOnPlane).dot(m_normal);// (hitPosition - pointOnPlane).dot(planeNorm); // (rayDir * t).dot(planeNorm) + (raySrc.asVector() - pointOnPlane).dot(planeNorm);
-	// test bounds.
+	float planeHit = ((raySrc.asVector() + (rayDir * t)) - pointOnPlane).dot(m_normal);
+
+	// is the ray hit in range of the planes bounds.
 	bool boundsZ = minVect.z <= hitPosition.z && maxVect.z >= hitPosition.z;
 	bool boundsY = minVect.y <= hitPosition.y && maxVect.y >= hitPosition.y;
 	bool boundsX = minVect.x <= hitPosition.x && maxVect.x >= hitPosition.x;
@@ -55,54 +55,9 @@ bool Plane::getIntersection(const Point3D& raySrc, const Vector3D& rayDir, float
 		distToFirstIntersection = (hitPosition - raySrc.asVector()).magnitude();
 		return true;
 	}
-	//std::cout << "Zero? " << zero << " t: " << t << " hit: " << hit << std::endl;
 
 	return false;
 
-	/*p*/ Vector3D planePoint_w = (m_centre.asVector() - (m_wDir * m_halfWidth)) + (m_halfWidth * 0.75f); // (m_wDir * (m_halfWidth * 2.0f));
-	std::cout << "ppw x: " << planePoint_w.x << " ppw y: " << planePoint_w.y << " ppw z: " << planePoint_w.z << " sum: " << planePoint_w.sum() << std::endl;
-
-	/*b*/ Vector3D planePoint_h = m_normal * (m_halfHeight * 0.9f);// * (m_halfHeight * 2.0f)) + m_centre.asVector();
-	std::cout << "pph x: " << planePoint_h.x << " pph y: " << planePoint_h.y << " pph z: " << planePoint_h.z << " sum: " << planePoint_h.sum() << std::endl;
-
-	float p = (m_normal.x * (planePoint_h.x - planePoint_w.x)) + (m_normal.y * (planePoint_h.y - planePoint_w.y)) + (m_normal.z * (planePoint_h.z - planePoint_w.z));
-	//std::cout << "t: " << p << std::endl;
-
-	Vector3D plane = (planePoint_w - planePoint_h);
-	Vector3D planN = plane * m_normal;
-	float sum = planN.sum();
-	//std::cout << "sum: " << sum << std::endl;
-
-	float tt = (((planePoint_h - raySrc.asVector()) * m_normal) / (rayDir * m_normal)).sum();
-	if (tt == 0)
-		std::cout << "tt: " << tt << std::endl;
-
-	return false;
-
-//	Vector3D planePoint_w = ((m_wDir * 0.36f) * (m_halfWidth * 2.0f)) + m_centre.asVector();
-//	Vector3D planePoint_h = ((m_hDir * 0.75f) * (m_halfHeight * 2.0f))+ m_centre.asVector();
-
-//	Vector3D plane = ( planePoint_w - planePoint_h );
-//	Vector3D planN = plane * m_normal;
-//	float sum = planN.magnitude();// sum();
-
-//	float t = ((plane - raySrc.asVector()) * m_normal).sum();
-//		t /= (rayDir * m_normal).sum();
-
-	std::cout << "X: "<< plane.x << " Y: " << plane.y << " Z: " << plane.z << " n.x: " << m_normal.x << " n.y: " << m_normal.z << " n.z: " << m_normal.z << " Sum: " << sum << std::endl;
-	std::cout << "t: " << t << " rn: " << (rayDir * m_normal).sum()/*<< " tVal: " << tVal */<< std::endl;
-
-	float tVal = 1.0f;//((m_normal * (rayDir * t)) + (raySrc.asVector() - plane) * m_normal).sum();	//????
-
-	if (tVal == 0.0f)
-	{
-		std::cout << "t: " << t << " tVal: " << tVal << std::endl;
-		distToFirstIntersection = t;
-		return true;
-	}
-
-
-	return false;
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
