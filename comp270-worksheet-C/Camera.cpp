@@ -1,6 +1,13 @@
 #include "stdafx.h"
 #include "Camera.h"
 #include "Object.h"
+#define vec std::vector
+#define resoX m_viewPlane.resolutionX
+#define resoY m_viewPlane.resolutionY
+#define halfH m_viewPlane.halfHeight
+#define halfW m_viewPlane.halfWidth
+#define dist m_viewPlane.distance
+
 
 // Initialises the camera at the given position
 void Camera::init(const Point3D& pos)
@@ -61,10 +68,39 @@ const Image& Camera::updateScreenBuffer(const std::vector<Object*>& objects)
 // Generates and stores rays from the camera through the centre of each pixel, in camera space
 void Camera::generateRays()
 {
-	m_pixelRays.clear();
-	// TODO: store the ray direction (in camera space through each pixel of the subdivided view plane,
-	// and store it at an appropriate index of m_pixelRays
+	m_pixelRays.clear(); // is this even needed?
+	
+	vec<Vector3D> column = vec<Vector3D>();
 
+	// find top left pixel (is pixel the right word for this?)
+	float x_pixel = -halfW;
+	float y_pixel = -halfH;
+
+	// find the spacing between the pixels 
+	float pixel_gap = (2.0f * halfW) / resoX; // half-distances and resolution are the same for both X and Y, so dont need seperate X/Y spacing
+
+	// do something for every pixel, i guess
+
+	for (int x = 0; (float)x < resoX; x++) // the (float) shuts up the warnings, i like when there are no warnings :)
+	{
+		float temp_y_pixel = y_pixel; // when moving to the next column, move back to the top of it
+
+		for (int y = 0; (float)y < resoY; y++) // im very tired
+		{
+			Vector3D pewpew = Vector3D(x_pixel, temp_y_pixel, dist); // i have no idea why i chose this name, but i won't change it
+			pewpew.normalise(); // i like this function because i didnt have to write it myself :)
+			column.push_back(pewpew);
+
+			temp_y_pixel += pixel_gap; // increment y_pixel location to create a column as we go
+		}
+
+		// when a column is complete, add it to the BIG table
+		m_pixelRays.push_back(column); 
+		column.clear();						// it concerns me that the push_back and clear function have red lines under them, but don't produce errors...
+
+		// dont forget to increment, you fool
+		x_pixel += pixel_gap;
+	}
 }
 
 // Computes the transformation that will take objects from world to camera coordinates
