@@ -28,6 +28,54 @@ bool Plane::getIntersection(const Point3D& raySrc, const Vector3D& rayDir, float
 	// TODO: implement the ray-plane intersection test, returning true if the ray passes through the plane at a
 	// point within the width/height bounds (if applicable).
 	
+
+	// THE Z AXIS IS WRONG IN THE DIAGRAM
+	//  IT SAYS THE PLANE IS AT Z = 0 WHEN ITS AT Z = 20
+
+
+	// FIRST : Distance along line where the thingies intersect
+
+		// equation from slides
+		float distanceAlongRay = ((m_centre - raySrc).dot(m_normal)) / (rayDir.dot(m_normal));
+		if (true) {}
+
+	// SECOND : find the intersection point, should be at z = 0
+
+		// couldnt multiply float by Vector3D, so had to do it this awkward way
+		Vector3D distanceXdirection = Vector3D();
+		distanceXdirection.x = rayDir.x * distanceAlongRay;
+		distanceXdirection.y = rayDir.y * distanceAlongRay;
+		distanceXdirection.z = rayDir.z * distanceAlongRay;
+
+		Point3D intersectPoint = raySrc + distanceXdirection;
+
+
+	// SECOND : figure out if its within the bounds of the plane,   -5 < x < 5     -5 < y < 5
+
+		// Width check
+		if (intersectPoint.x >= m_centre.x - m_halfWidth)
+		{
+			if (intersectPoint.x <= m_centre.x + m_halfWidth)
+			{
+
+			}
+			else return false;
+		}
+		else return false;
+
+		if (intersectPoint.y >= m_centre.y - m_halfHeight)
+		{
+			if (intersectPoint.y <= m_centre.y + m_halfHeight)
+			{
+				distToFirstIntersection = distanceAlongRay;
+				return true;
+			}
+		}
+
+		else { return false; }
+
+
+
 	return false;
 }
 
